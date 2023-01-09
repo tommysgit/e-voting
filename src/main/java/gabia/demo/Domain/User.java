@@ -1,6 +1,6 @@
 package gabia.demo.Domain;
 
-import gabia.demo.Domain.enums.Role;
+import gabia.demo.Domain.Enums.Role;
 
 import javax.persistence.*;
 
@@ -8,13 +8,13 @@ import javax.persistence.*;
 public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long user_id;
+    private Long userId;
 
     @Column
     private char status;
 
     @Column
-    private int voting_rights_count;
+    private int votingRightsCount;
 
     @Column
     private String name;

@@ -1,5 +1,7 @@
 package gabia.demo.Domain;
 
+import gabia.demo.Domain.Enums.VotingSort;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,13 +9,14 @@ public class Voting extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long voting_id;
+    private Long votingId;
 
     @Column
-    private char status;
+    @Enumerated(EnumType.STRING)
+    private VotingSort votingSort;
 
     @Column
-    private int voting_rights_count;
+    private int votingRightsCount;
 
 
     @ManyToOne

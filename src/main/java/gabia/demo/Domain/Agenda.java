@@ -1,33 +1,32 @@
 package gabia.demo.Domain;
 
-import org.springframework.context.annotation.Primary;
+import gabia.demo.Domain.Enums.DeleteStatus;
+import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Getter
 public class Agenda extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long agenda_id;
+    private Long agendaId;
 
     @Column
     private char status;
 
     @Column
-    private char is_delete;
+    @Enumerated(EnumType.STRING)
+    private DeleteStatus isDelete;
 
-    @Column
-    private char sort;
-
-    @Column
-    private LocalDateTime start_time;
-
-    @Column
-    private LocalDateTime end_time;
 
     @OneToOne(mappedBy = "agenda")
     @PrimaryKeyJoinColumn
-    private VotingRights votingRights;
+    private AgendaVoting agendaVoting;
+
+    @Column
+    private String content;
 }

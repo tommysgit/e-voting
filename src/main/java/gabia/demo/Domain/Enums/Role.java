@@ -1,4 +1,4 @@
-package gabia.demo.Domain.enums;
+package gabia.demo.Domain.Enums;
 
 public enum Role {
     ROLE_ADMIN("ADMIN"),
