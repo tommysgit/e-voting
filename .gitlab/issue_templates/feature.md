@@ -1,9 +1,9 @@
 ---
-name: "✅ Feature"
+name: "dev"
 about: Feature 작업 내용을 입력해주세요.
-title: "[Feature]"
+title: "Feat : "
 labels: enhancement
-assignees: ''
+assignees: 곽영일(Aiden)
 
 ---
 
