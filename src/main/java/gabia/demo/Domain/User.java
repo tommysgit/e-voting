@@ -1,17 +1,21 @@
 package gabia.demo.Domain;
 
 import gabia.demo.Domain.Enums.Role;
+import lombok.*;
 
 import javax.persistence.*;
-
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Getter
 public class User extends BaseEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userIdx;
 
     @Column
-    private char status;
+    private boolean isDelete;
 
     @Column
     private int votingRightsCount;
@@ -29,4 +33,7 @@ public class User extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public boolean checkAdmin(){
+        return this.role.equals(Role.ROLE_ADMIN);
+    }
 }
