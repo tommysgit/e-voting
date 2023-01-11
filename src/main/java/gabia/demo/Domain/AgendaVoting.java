@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 @Getter
 public class AgendaVoting {
     @Id
-    private Long agendaId;
+    private Long agendaIdx;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "agenda_id")
+    @JoinColumn(name = "agendaIdx")
     private Agenda agenda;
 
     @Column
