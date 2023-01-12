@@ -1,7 +1,6 @@
 package gabia.demo.Service;
 
 import gabia.demo.Domain.Agenda;
-import gabia.demo.Domain.User;
 import gabia.demo.Dto.AgendaDto;
 import gabia.demo.Repository.AgendaRepository;
 import gabia.demo.Repository.UserRepository;
@@ -19,11 +18,7 @@ public class AgendaService {
     private final UserRepository userRepository;
 
     // 안건등록
-    @Transactional
-    public void createAgenda(User userInfo, String content){
-        if(!userRepository.findById(userInfo.getUserIdx()).get().checkAdmin()){
-            throw new RuntimeException();
-        }
+    public void createAgenda(String content){
 
         Agenda agenda = Agenda.builder().isDelete(false).content(content).build();
         agendaRepository.save(agenda);
@@ -31,7 +26,7 @@ public class AgendaService {
 
     @Transactional(readOnly = true)
     public List<AgendaDto.AgendaListReq> selectAgenda(){
-        List<Agenda> agendaList = agendaRepository.findAllAgendas();
+        List<Agenda> agendaList = agendaRepository.findFetchAgendaList();
         List<AgendaDto.AgendaListReq> agendaListReqList = new LinkedList<>();
         agendaList.forEach(agenda -> {
             agendaListReqList.add(AgendaDto.AgendaListReq.builder().agenda(agenda).build());
