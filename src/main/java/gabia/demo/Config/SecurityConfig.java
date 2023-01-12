@@ -38,7 +38,11 @@ public class SecurityConfig {
                 .and().formLogin().disable();
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+        http.httpBasic()
+                .disable().formLogin().disable();
+        http.authorizeRequests()
+                .antMatchers("/users/signIn").permitAll()
+                .antMatchers("/users/signUp").permitAll();
 
         http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
