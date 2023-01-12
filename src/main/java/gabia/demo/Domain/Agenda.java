@@ -1,6 +1,7 @@
 package gabia.demo.Domain;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@DynamicUpdate
 public class Agenda extends BaseEntity{
 
     @Id
@@ -26,4 +28,8 @@ public class Agenda extends BaseEntity{
 
     @Column
     private String content;
+
+    public void deleteAgenda(){
+        this.isDelete = true;
+    }
 }

@@ -5,23 +5,29 @@ import gabia.demo.Dto.AgendaDto;
 import gabia.demo.Repository.AgendaRepository;
 import gabia.demo.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AgendaService {
     private final AgendaRepository agendaRepository;
     private final UserRepository userRepository;
 
-    // 안건등록
     public void createAgenda(String content){
 
         Agenda agenda = Agenda.builder().isDelete(false).content(content).build();
         agendaRepository.save(agenda);
+    }
+
+    @Transactional
+    public void deleteAgenda(Long agendaIdx){
+        Agenda agenda = agendaRepository.findById(agendaIdx).orElseThrow();
+        agenda.deleteAgenda();
     }
 
     @Transactional(readOnly = true)

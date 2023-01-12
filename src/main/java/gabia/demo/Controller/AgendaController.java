@@ -5,6 +5,7 @@ import gabia.demo.Dto.AgendaDto;
 import gabia.demo.Service.AgendaService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +33,15 @@ public class AgendaController {
     @PostMapping()
     public ResponseEntity<BaseResponse> postAgenda(@AuthenticationPrincipal User userInfo, @RequestBody Map<String, String> content){
         agendaService.createAgenda(content.get("content"));
+
+        return ResponseEntity.ok(BaseResponse.Success());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(description = "안건 삭제", summary = "안건 삭제")
+    @DeleteMapping("/{agendaIdx}")
+    public ResponseEntity<BaseResponse> deleteAgenda(@PathVariable("agendaIdx") Long agendaIdx){
+        agendaService.deleteAgenda(agendaIdx);
 
         return ResponseEntity.ok(BaseResponse.Success());
     }
