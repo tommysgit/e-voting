@@ -26,7 +26,6 @@ public class UserController {
     @PostMapping("/signIn")
     public ResponseEntity<BaseResponse<UserDto.SignInRes>> postSignIn(@RequestBody UserDto.SignInReq signInReq){
         UserDto.SignInRes signInRes = userService.signIn(signInReq);
-        System.out.println(signInRes);
         return ResponseEntity.ok(BaseResponse.Success(signInRes));
     }
 }

@@ -35,13 +35,9 @@ public class AgendaDto {
         private char proceeding;
 
         private void setProceeding(){
-
-            if (LocalDateTime.now().isAfter(this.startTime) && LocalDateTime.now().isBefore(this.endTime)){
-                this.proceeding = 'Y';
-            }
-            else{
-                this.proceeding = 'N';
-            }
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            this.proceeding = (currentDateTime.isAfter(this.startTime) && currentDateTime.isBefore(this.endTime)) ?
+                    'Y' : 'N';
         }
     }
 }

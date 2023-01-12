@@ -1,6 +1,6 @@
 ## 📕 Issue Number
 
-> ex) resolved #1
+> ex) Closes #1
 
 ## 📙 작업 개요
 
