@@ -25,8 +25,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private UserDetails createSpringSecurityUser(User user){
-        List<GrantedAuthority> grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getDescription()));
+        //List<GrantedAuthority> grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getDescription()));
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getId()).password(user.getPassword()).authorities(grantedAuthorities).build();
+                .username(user.getId()).password(user.getPassword()).authorities(user.getRole()).build();
     }
 }

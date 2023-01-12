@@ -34,16 +34,14 @@ public class UserService {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(signInReqData.getId(),
                 signInReqData.getPassword());
-        System.out.println(3);
+
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(usernamePasswordAuthenticationToken);
-        System.out.println(4);
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println(5);
+
         String token = jwtTokenProvider.createToken(authentication);
         // 삭제된 유저 추후 예외처리 구현 시 추가
 
-
-        System.out.println(6);
 
         User loginUser = userRepository.findByIdAndIsDelete(signInReqData.getId(), false)
                 .orElseThrow(()->new RuntimeException());

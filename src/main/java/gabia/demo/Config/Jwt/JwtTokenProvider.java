@@ -22,14 +22,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider implements InitializingBean {
-    private static final String AUTHORITIES_KEY = "auth";
-    private final String secretKey;
+    private final String AUTHORITIES_KEY;
     private final long tokenValidTime;
     private Key key;
-    public JwtTokenProvider(@Value("${jwt.secret") String secret,
+    public JwtTokenProvider(@Value("${jwt.secret}") String secret,
                             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds){
-        this.secretKey = secret;
         this.tokenValidTime = tokenValidityInSeconds;
+        this.AUTHORITIES_KEY = secret;
     }
     // 토큰 생성
     public String createToken(Authentication authentication) {
@@ -56,7 +55,6 @@ public class JwtTokenProvider implements InitializingBean {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
