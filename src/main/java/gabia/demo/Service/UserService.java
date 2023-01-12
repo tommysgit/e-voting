@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,18 +29,25 @@ public class UserService {
 
     }
     // 로그인
+    @Transactional(readOnly = true)
     public UserDto.SignInRes signIn(UserDto.SignInReq signInReqData){
-        User loginUser = userRepository.findByIdAndPassword(signInReqData.getId(), passwordEncoder.encode(signInReqData.getPassword()))
-                .orElseThrow(()->new RuntimeException());
 
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginUser.getUserIdx(),
-                loginUser.getPassword());
-
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(signInReqData.getId(),
+                signInReqData.getPassword());
+        System.out.println(3);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(usernamePasswordAuthenticationToken);
+        System.out.println(4);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        System.out.println(5);
         String token = jwtTokenProvider.createToken(authentication);
         // 삭제된 유저 추후 예외처리 구현 시 추가
+
+
+        System.out.println(6);
+
+        User loginUser = userRepository.findByIdAndIsDelete(signInReqData.getId(), false)
+                .orElseThrow(()->new RuntimeException());
+        loginUser.checkPassword(passwordEncoder, passwordEncoder.encode(signInReqData.getPassword()));
 
         return UserDto.SignInRes.builder().userIdx(loginUser.getUserIdx()).name(loginUser.getName())
                 .id(loginUser.getId()).token(token).build();
