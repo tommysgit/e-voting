@@ -22,7 +22,7 @@ public class Agenda extends BaseEntity{
     private boolean isDelete;
 
 
-    @OneToOne(mappedBy = "agenda")
+    @OneToOne(mappedBy = "agenda", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private AgendaVoting agendaVoting;
 
@@ -31,5 +31,9 @@ public class Agenda extends BaseEntity{
 
     public void deleteAgenda(){
         this.isDelete = true;
+    }
+
+    public void setAgendaVoting(AgendaVoting agendaVoting){
+        this.agendaVoting = agendaVoting;
     }
 }
