@@ -5,9 +5,12 @@ import gabia.demo.Domain.Enums.VotingSort;
 import gabia.demo.Domain.Voting;
 import gabia.demo.Dto.Jpql.VoteSumDataDto;
 import gabia.demo.Dto.VotingDto;
+import gabia.demo.Dto.VotingResult.NormalVotingResultDto;
 import gabia.demo.Repository.AgendaRepository;
 import gabia.demo.Repository.UserRepository;
 import gabia.demo.Repository.VotingRepository;
+import gabia.demo.Service.VotingResult.VotingResult;
+import gabia.demo.Service.VotingResult.VotingResultFactory;
 import gabia.demo.Service.VotingSystem.LimitVoting;
 import gabia.demo.Service.VotingSystem.VotingSystem;
 import gabia.demo.Service.VotingSystem.VotingSystemFactory;
@@ -30,6 +33,8 @@ public class VotingService {
 
     private final VotingSystemFactory votingSystemFactory;
 
+    private final VotingResultFactory votingResultFactory;
+
     private final int VOTE_LIMIT = 10;
 
     // 투표하기  안건 투표 관련 정보 조회 -> 투표 가능한 시간인지 확인 후 불가능한 시간이면 예외처리
@@ -49,4 +54,12 @@ public class VotingService {
     }
 
 
+    @Transactional(readOnly = true)
+    public NormalVotingResultDto getVotingResult(User userInfo, Long agendaIdx){
+        gabia.demo.Domain.User user = userRepository.findByIdAndIsDelete(userInfo.getUsername(), false).get();
+        Agenda agenda = agendaRepository.findFetchAgendaVotingByIdx(agendaIdx).get();
+        VotingResult votingResult = votingResultFactory.getVotingResult(user.getRole());
+        NormalVotingResultDto normalVotingResultDto = votingResult.checkResult(agenda);
+        return normalVotingResultDto;
+    }
 }
