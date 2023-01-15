@@ -1,5 +1,7 @@
 package gabia.demo.Service;
 
+import gabia.demo.Common.CustomException;
+import gabia.demo.Common.ErrorCode;
 import gabia.demo.Domain.Agenda;
 import gabia.demo.Domain.Enums.VotingSort;
 import gabia.demo.Domain.Voting;
@@ -40,9 +42,10 @@ public class VotingService {
     // 투표 방식에 따른 로직처리
     @Transactional
     public void vote(User userInfo, Long agendaIdx, VotingDto.VoteReq voteReq){
-        gabia.demo.Domain.User user = userRepository.findByIdAndIsDelete(userInfo.getUsername(), false).get();
+        gabia.demo.Domain.User user = userRepository.findByIdAndIsDelete(userInfo.getUsername(), false)
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_EXISTS));
 
-        Agenda agenda = agendaRepository.findFetchAgendaVotingByIdx(agendaIdx).get();
+        Agenda agenda = agendaRepository.findFetchAgendaVotingByIdx(agendaIdx).orElseThrow(()->new CustomException(ErrorCode.AGENDA_NOT_EXISTS));
 
         VotingDto.VoteData voteData = VotingDto.VoteData.builder().user(user).voteReq(voteReq).agenda(agenda).build();
 
@@ -56,7 +59,7 @@ public class VotingService {
     @Transactional(readOnly = true)
     public NormalVotingResultDto getVotingResult(User userInfo, Long agendaIdx){
         gabia.demo.Domain.User user = userRepository.findByIdAndIsDelete(userInfo.getUsername(), false).get();
-        Agenda agenda = agendaRepository.findFetchAgendaVotingByIdx(agendaIdx).get();
+        Agenda agenda = agendaRepository.findFetchAgendaVotingByIdx(agendaIdx).orElseThrow(()->new CustomException(ErrorCode.AGENDA_NOT_EXISTS));
         VotingResult votingResult = votingResultFactory.getVotingResult(user.getRole());
         NormalVotingResultDto normalVotingResultDto = votingResult.checkResult(agenda);
         return normalVotingResultDto;

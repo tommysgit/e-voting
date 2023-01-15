@@ -7,6 +7,7 @@ import gabia.demo.Dto.VotingResult.*;
 import gabia.demo.Repository.VotingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 public class AdminVotingResult implements VotingResult{
     private final VotingRepository votingRepository;
     @Override
+    @Transactional(readOnly = true)
     public NormalVotingResultDto checkResult(Agenda agenda) {
         List<Voting> votingList = votingRepository.findFetchUserByAgenda(agenda);
         AdminVotingResultData adminVotingResultData = calculationAdminVotingResult(votingList);
