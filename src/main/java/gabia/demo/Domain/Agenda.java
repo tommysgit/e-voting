@@ -1,6 +1,7 @@
 package gabia.demo.Domain;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@DynamicUpdate
 public class Agenda extends BaseEntity{
 
     @Id
@@ -20,10 +22,18 @@ public class Agenda extends BaseEntity{
     private boolean isDelete;
 
 
-    @OneToOne(mappedBy = "agenda")
+    @OneToOne(mappedBy = "agenda", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private AgendaVoting agendaVoting;
 
     @Column
     private String content;
+
+    public void deleteAgenda(){
+        this.isDelete = true;
+    }
+
+    public void setAgendaVoting(AgendaVoting agendaVoting){
+        this.agendaVoting = agendaVoting;
+    }
 }

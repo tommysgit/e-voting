@@ -13,5 +13,6 @@ public interface AgendaRepository extends JpaRepository<Agenda, Long> {
     List<Agenda> findFetchAgendaList();
 
     @Query("select a from Agenda a join fetch a.agendaVoting where a.agendaIdx =:agendaIdx")
-    Optional<Agenda> findFetchAgendaByIdx(@Param("agendaIdx") Long agendaIdx);
+    Optional<Agenda> findFetchAgendaVotingByIdx(@Param("agendaIdx") Long agendaIdx);
+
 }

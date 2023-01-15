@@ -1,28 +1,38 @@
 package gabia.demo.Domain;
 
+import gabia.demo.Domain.Enums.Vote;
 import gabia.demo.Domain.Enums.VotingSort;
+import gabia.demo.Dto.Jpql.VoteSumDataDto;
+import gabia.demo.Dto.VotingDto;
+import lombok.*;
 
 import javax.persistence.*;
-
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Getter
 public class Voting extends BaseEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long votingId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long votingIdx;
 
-    @Column
     @Enumerated(EnumType.STRING)
-    private VotingSort votingSort;
+    private Vote vote;
 
     @Column
     private int votingRightsCount;
 
 
     @ManyToOne
-    @JoinColumn(name = "agenda_id")
+    @JoinColumn(name = "agendaIdx")
     private Agenda agenda;
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userIdx")
     private User user;
+
+//    public VoteSumDataDto toVoteSumDataDto(){
+//
+//    }
 }
