@@ -1,5 +1,7 @@
 package gabia.demo.Service.VotingSystem;
 
+import gabia.demo.Common.CustomException;
+import gabia.demo.Common.ErrorCode;
 import gabia.demo.Domain.Agenda;
 import gabia.demo.Domain.AgendaVoting;
 import gabia.demo.Domain.User;
@@ -32,23 +34,20 @@ public class VotingTemplate implements VotingSystem {
     private void validateVotingTime(AgendaVoting agendaVoting){
         LocalDateTime currentDateTime = LocalDateTime.now();
         if (currentDateTime.isAfter(agendaVoting.getEndTime()) && currentDateTime.isBefore(agendaVoting.getStartTime())){
-            log.info("투표가능한 시간이 아닙니다.");
-            throw new RuntimeException();
+            throw new CustomException(ErrorCode.VOTING_IMPOSSIBLE);
         }
     }
 
     @Transactional
     public void validateVotingDuplication(User user, Agenda agenda){
         if (votingRepository.findByAgendaAndUser(agenda, user).isPresent()){
-            log.info("해당 유저는 이미 투표를 하였습니다.");
-            throw new RuntimeException();
+            throw new CustomException(ErrorCode.USER_ALREADY_VOTE);
         }
     }
 
     private void validateVotingCount(User user, int votingCount){
         if (user.getVotingRightsCount() < votingCount){
-            log.info("투표가능한 의결권을 초과하였습니다.");
-            throw new RuntimeException();
+            throw new CustomException(ErrorCode.VOTING_RIGHTS_EXCEED);
         }
     }
 }

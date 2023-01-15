@@ -1,5 +1,7 @@
 package gabia.demo.Service.VotingResult;
 
+import gabia.demo.Common.CustomException;
+import gabia.demo.Common.ErrorCode;
 import gabia.demo.Domain.Agenda;
 import gabia.demo.Domain.Enums.Vote;
 import gabia.demo.Domain.Voting;
@@ -10,6 +12,7 @@ import gabia.demo.Repository.AgendaRepository;
 import gabia.demo.Repository.VotingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +22,7 @@ import java.util.List;
 public class UserVotingResult implements VotingResult{
     private final VotingRepository votingRepository;
     @Override
+    @Transactional(readOnly = true)
     public NormalVotingResultDto checkResult(Agenda agenda) {
         validateResultTime(agenda.getAgendaVoting().getEndTime());
         List<Voting> votingList = votingRepository.findFetchUserByAgenda(agenda);
@@ -56,7 +60,7 @@ public class UserVotingResult implements VotingResult{
     private void validateResultTime(LocalDateTime endTime){
         LocalDateTime now = LocalDateTime.now();
         if (now.isBefore(endTime)){
-            throw new RuntimeException();
+            throw new CustomException(ErrorCode.VOTING_NOT_END);
         }
     }
 }

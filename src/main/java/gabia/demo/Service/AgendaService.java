@@ -1,5 +1,7 @@
 package gabia.demo.Service;
 
+import gabia.demo.Common.CustomException;
+import gabia.demo.Common.ErrorCode;
 import gabia.demo.Domain.Agenda;
 import gabia.demo.Dto.AgendaDto;
 import gabia.demo.Repository.AgendaRepository;
@@ -26,7 +28,7 @@ public class AgendaService {
 
     @Transactional
     public void deleteAgenda(Long agendaIdx){
-        Agenda agenda = agendaRepository.findById(agendaIdx).orElseThrow();
+        Agenda agenda = agendaRepository.findById(agendaIdx).orElseThrow(()->new CustomException(ErrorCode.AGENDA_NOT_EXISTS));
         agenda.deleteAgenda();
     }
 

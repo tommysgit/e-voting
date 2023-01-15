@@ -1,5 +1,7 @@
 package gabia.demo.Service;
 
+import gabia.demo.Common.CustomException;
+import gabia.demo.Common.ErrorCode;
 import gabia.demo.Config.Jwt.JwtTokenProvider;
 import gabia.demo.Domain.User;
 import gabia.demo.Dto.UserDto;
@@ -44,7 +46,7 @@ public class UserService {
 
 
         User loginUser = userRepository.findByIdAndIsDelete(signInReqData.getId(), false)
-                .orElseThrow(()->new RuntimeException());
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_EXISTS));
         loginUser.checkPassword(passwordEncoder, passwordEncoder.encode(signInReqData.getPassword()));
 
         return UserDto.SignInRes.builder().userIdx(loginUser.getUserIdx()).name(loginUser.getName())

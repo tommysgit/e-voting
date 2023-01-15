@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @Getter
+@Builder
 public class BaseResponse<T> {
     public BaseResponse(boolean isSuccess, String message, int code) {
         this.isSuccess = isSuccess;
@@ -25,5 +26,9 @@ public class BaseResponse<T> {
 
     public static <T>BaseResponse Success(T data){
         return new BaseResponse(true, "성공", 200, data);
+    }
+
+    public static BaseResponse Fail(ErrorCode errorCode){
+        return BaseResponse.builder().code(errorCode.getCode()).isSuccess(errorCode.isSuccess()).message(errorCode.getMessage()).build();
     }
 }

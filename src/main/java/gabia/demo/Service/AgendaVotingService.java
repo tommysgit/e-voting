@@ -1,5 +1,7 @@
 package gabia.demo.Service;
 
+import gabia.demo.Common.CustomException;
+import gabia.demo.Common.ErrorCode;
 import gabia.demo.Domain.Agenda;
 import gabia.demo.Domain.AgendaVoting;
 import gabia.demo.Dto.AgendaVotingDto;
@@ -21,13 +23,13 @@ public class AgendaVotingService {
     @Transactional
     public void createAgendaVoting(Long agendaIdx, AgendaVotingDto.CreateAgendaVotingReq createAgendaVotingReq){
 
-        Agenda agenda = agendaRepository.findById(agendaIdx).orElseThrow();
+        Agenda agenda = agendaRepository.findById(agendaIdx).orElseThrow(()->new CustomException(ErrorCode.AGENDA_NOT_EXISTS));
         agendaVotingRepository.save(createAgendaVotingReq.toEntity(agenda));
     }
     // 투표 종료
     @Transactional
     public void endVoting(Long agendaIdx){
-        AgendaVoting agendaVoting = agendaVotingRepository.findById(agendaIdx).orElseThrow();
+        AgendaVoting agendaVoting = agendaVotingRepository.findById(agendaIdx).orElseThrow(()->new CustomException(ErrorCode.AGENDA_NOT_EXISTS));
         agendaVoting.endVoting();
     }
 }

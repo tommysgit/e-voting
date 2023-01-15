@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class VotingService {
-    private final VotingRepository votingRepository;
     private final UserRepository userRepository;
 
     private final AgendaRepository agendaRepository;
