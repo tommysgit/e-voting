@@ -10,6 +10,11 @@ import java.util.Objects;
 
 public class AgendaDto {
     @Getter
+    public static class createAgendaReq{
+        String content;
+
+    }
+    @Getter
     public static class AgendaListReq {
         @Builder
         public AgendaListReq(Agenda agenda) {
