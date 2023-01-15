@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,12 +37,13 @@ public class AgendaService {
     @Transactional(readOnly = true)
     public List<AgendaDto.AgendaListReq> selectAgenda(){
         List<Agenda> agendaList = agendaRepository.findFetchAgendaList();
-        List<AgendaDto.AgendaListReq> agendaListReqList = new LinkedList<>();
-        agendaList.forEach(agenda -> {
-            agendaListReqList.add(AgendaDto.AgendaListReq.builder().agenda(agenda).build());
-        });
+        List<AgendaDto.AgendaListReq> agendaListReqList = agendaList.stream().filter(v->v.isDelete()==false)
+                .map(this::toAgendaListReq).collect(Collectors.toList());
 
         return agendaListReqList;
     }
 
+    private AgendaDto.AgendaListReq toAgendaListReq(Agenda agenda){
+        return AgendaDto.AgendaListReq.builder().agenda(agenda).build();
+    }
 }
