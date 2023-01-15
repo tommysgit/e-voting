@@ -1,5 +1,7 @@
 package gabia.demo.Service;
 
+import gabia.demo.Common.CustomException;
+import gabia.demo.Common.ErrorCode;
 import gabia.demo.Config.Jwt.JwtTokenProvider;
 import gabia.demo.Domain.User;
 import gabia.demo.Dto.UserDto;
@@ -32,6 +34,10 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDto.SignInRes signIn(UserDto.SignInReq signInReqData){
 
+        User loginUser = userRepository.findByIdAndIsDelete(signInReqData.getId(), false)
+                .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_EXISTS));
+        loginUser.checkPassword(passwordEncoder, passwordEncoder.encode(signInReqData.getPassword()));
+
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(signInReqData.getId(),
                 signInReqData.getPassword());
 
@@ -40,12 +46,6 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtTokenProvider.createToken(authentication);
-        // 삭제된 유저 추후 예외처리 구현 시 추가
-
-
-        User loginUser = userRepository.findByIdAndIsDelete(signInReqData.getId(), false)
-                .orElseThrow(()->new RuntimeException());
-        loginUser.checkPassword(passwordEncoder, passwordEncoder.encode(signInReqData.getPassword()));
 
         return UserDto.SignInRes.builder().userIdx(loginUser.getUserIdx()).name(loginUser.getName())
                 .id(loginUser.getId()).token(token).build();
