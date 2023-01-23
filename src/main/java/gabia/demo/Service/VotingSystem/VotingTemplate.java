@@ -6,7 +6,9 @@ import gabia.demo.Domain.Agenda;
 import gabia.demo.Domain.AgendaVoting;
 import gabia.demo.Domain.User;
 import gabia.demo.Dto.VotingDto;
+import gabia.demo.Repository.AgendaRepository;
 import gabia.demo.Repository.VotingRepository;
+import gabia.demo.Repository.VotingResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,8 +21,10 @@ import java.time.LocalDateTime;
 public class VotingTemplate implements VotingSystem {
 
     protected final VotingRepository votingRepository;
+    protected final VotingResultRepository votingResultRepository;
 
-    @Transactional
+    protected final AgendaRepository agendaRepository;
+
      public void vote(VotingDto.VoteData voteData){
          validateVoting(voteData);
      }
@@ -38,7 +42,6 @@ public class VotingTemplate implements VotingSystem {
         }
     }
 
-    @Transactional
     public void validateVotingDuplication(User user, Agenda agenda){
         if (votingRepository.findByAgendaAndUser(agenda, user).isPresent()){
             throw new CustomException(ErrorCode.USER_ALREADY_VOTE);
