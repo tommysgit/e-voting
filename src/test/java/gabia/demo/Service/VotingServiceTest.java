@@ -1,17 +1,11 @@
 package gabia.demo.Service;
 
-import gabia.demo.Domain.Agenda;
-import gabia.demo.Domain.AgendaVoting;
+import gabia.demo.Domain.*;
 import gabia.demo.Domain.Enums.Role;
 import gabia.demo.Domain.Enums.Vote;
 import gabia.demo.Domain.Enums.VotingSort;
-import gabia.demo.Domain.User;
-import gabia.demo.Domain.Voting;
 import gabia.demo.Dto.VotingDto;
-import gabia.demo.Repository.AgendaRepository;
-import gabia.demo.Repository.AgendaVotingRepository;
-import gabia.demo.Repository.UserRepository;
-import gabia.demo.Repository.VotingRepository;
+import gabia.demo.Repository.*;
 import gabia.demo.Service.VotingResult.UserVotingResult;
 import gabia.demo.Service.VotingSystem.LimitVoting;
 import gabia.demo.Service.VotingSystem.NonLimitVoting;
@@ -22,11 +16,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -53,31 +48,16 @@ public class VotingServiceTest {
     private UserVotingResult userVotingResult;
 
     @Autowired
-    private LimitVoting limitVoting;
+    private VotingResultRepository votingResultRepository;
 
-    @Autowired
-    private NonLimitVoting nonLimitVoting;
 
-    private Agenda agenda;
 
-    private AgendaVoting agendaVoting;
-    @BeforeEach
-    void setUp(){
-        LocalDateTime now = LocalDateTime.now();
-
-        agenda = Agenda.builder().content("졸업식을 갈지말지에 대해...").build();
-        agendaVoting = AgendaVoting.builder().agenda(agenda)
-                .startTime(now).endTime(now.plusMinutes(1)).build();
-        agenda.setAgendaVoting(agendaVoting);
-        agendaVotingRepository.save(agendaVoting);
-
+    @AfterEach
+    void deleteTestDate(){
+        votingRepository.deleteAll();
+        userRepository.deleteAll();
+        agendaRepository.deleteAll();
     }
-//    @AfterEach
-//    void deleteTestDate(){
-//        votingRepository.deleteAll();
-//        userRepository.deleteAll();
-//        agendaRepository.deleteAll();
-//    }
 
     @Test()
     @DisplayName("선착순 투표 동시성 테스트")
@@ -88,25 +68,37 @@ public class VotingServiceTest {
         // executorService 스레드 생성 및 작업할당 포크조인 방식
         // countDownLatch 메인 스레드가 먼저 실행되는 것을 방지
 
-        // given, when
-        int userCount = 20;
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        int userCount = 10;
+        Agenda agenda = Agenda.builder().content("졸업식을 갈지말지에 대해...").build();
+        AgendaVoting agendaVoting = AgendaVoting.builder().agenda(agenda).votingSort(VotingSort.LIMIT)
+                .startTime(now).endTime(now.plusMinutes(1)).build();
+        VotingResult votingResult = VotingResult.builder().agenda(agenda).build();
+        agenda.setAgendaVoting(agendaVoting);
+        agenda.setVotingResult(votingResult);
+
+        agendaRepository.save(agenda);
+
+
+        // when
         IntStream.range(0,userCount).parallel().forEach(e->{
             try{
-                User user = User.builder().role(Role.ROLE_MEMBER).
+                User user = User.builder().role(Role.ROLE_MEMBER).id(UUID.randomUUID().toString().substring(8)).
                         votingRightsCount(userCount).name("홍길동 분신술").build();
                 userRepository.save(user);
 
                 VotingDto.VoteReq voteReq = VotingDto.VoteReq.builder().votingRightsCount(1).vote(Vote.AGREE).build();
-                VotingDto.VoteData voteData = VotingDto.VoteData.builder().voteReq(voteReq).user(user).agenda(agenda).build();
 
-                limitVoting.vote(voteData);
+                votingService.vote(user.getId(), agenda.getAgendaIdx(), voteReq);
             }catch (RuntimeException ex){
                 System.out.println(ex);
             }
         });
 
         // then
-        Assertions.assertThat(limitVoting.getVotingSum(agenda)).isEqualTo(VOTING_LIMIT);
+        System.out.println("then 시작!!!!");
+        Assertions.assertThat(votingResultRepository.findById(agenda.getAgendaIdx()).get().getVotingSum()).isEqualTo(VOTING_LIMIT);
     }
     @Test()
     @DisplayName("비 선착순 의결권 투표")
@@ -116,14 +108,20 @@ public class VotingServiceTest {
         int disagreeCount = 50;
         int abstentionCount = 10;
         int loopCount = 10;
+        LocalDateTime now = LocalDateTime.now();
+        Agenda agenda = Agenda.builder().content("졸업식을 갈지말지에 대해...").build();
+        AgendaVoting agendaVoting = AgendaVoting.builder().agenda(agenda).votingSort(VotingSort.NON_LIMIT)
+                .startTime(now).endTime(now.plusMinutes(1)).build();
+        agenda.setAgendaVoting(agendaVoting);
+        agendaVotingRepository.save(agendaVoting);
 
         // when
         for (int i = 0; i < loopCount; i++) {
-            User user1 = User.builder().role(Role.ROLE_MEMBER).
+            User user1 = User.builder().role(Role.ROLE_MEMBER).id(UUID.randomUUID().toString().substring(8)).
                     votingRightsCount(100).name("홍길동 분신술").build();
-            User user2 = User.builder().role(Role.ROLE_MEMBER).
+            User user2 = User.builder().role(Role.ROLE_MEMBER).id(UUID.randomUUID().toString().substring(8)).
                     votingRightsCount(100).name("홍길동 분신술").build();
-            User user3 = User.builder().role(Role.ROLE_MEMBER).
+            User user3 = User.builder().role(Role.ROLE_MEMBER).id(UUID.randomUUID().toString().substring(8)).
                     votingRightsCount(100).name("홍길동 분신술").build();
 
             userRepository.save(user1);
@@ -134,17 +132,13 @@ public class VotingServiceTest {
             VotingDto.VoteReq voteReq2 = VotingDto.VoteReq.builder().votingRightsCount(disagreeCount).vote(Vote.DISAGREE).build();
             VotingDto.VoteReq voteReq3 = VotingDto.VoteReq.builder().votingRightsCount(abstentionCount).vote(Vote.ABSTENTION).build();
 
-            VotingDto.VoteData voteData1 = VotingDto.VoteData.builder().voteReq(voteReq1).user(user1).agenda(agenda).build();
-            VotingDto.VoteData voteData2 = VotingDto.VoteData.builder().voteReq(voteReq2).user(user2).agenda(agenda).build();
-            VotingDto.VoteData voteData3 = VotingDto.VoteData.builder().voteReq(voteReq3).user(user3).agenda(agenda).build();
-
-            nonLimitVoting.vote(voteData1);
-            nonLimitVoting.vote(voteData2);
-            nonLimitVoting.vote(voteData3);
+            votingService.vote(user1.getId(), agenda.getAgendaIdx(), voteReq1);
+            votingService.vote(user2.getId(), agenda.getAgendaIdx(), voteReq2);
+            votingService.vote(user3.getId(), agenda.getAgendaIdx(), voteReq3);
         }
 
         // then 찬성, 반대, 기권 순으로 표가 잘 들어갔는지 확인
-        List<Voting> votingList = votingRepository.findFetchUserByAgenda(agenda);
+        List<Voting> votingList = votingRepository.findByAgenda(agenda);
 
         Assertions.assertThat(userVotingResult.countVotingSum(votingList, Vote.AGREE)).isEqualTo(loopCount*agreeCount);
         Assertions.assertThat(userVotingResult.countVotingSum(votingList, Vote.DISAGREE)).isEqualTo(loopCount*disagreeCount);
