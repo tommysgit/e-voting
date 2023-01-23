@@ -22,9 +22,13 @@ public class Agenda extends BaseEntity{
     private boolean isDelete;
 
 
-    @OneToOne(mappedBy = "agenda", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "agenda", cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
     private AgendaVoting agendaVoting;
+
+    @OneToOne(mappedBy = "agenda", cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
+    private VotingResult votingResult;
 
     @Column
     private String content;
@@ -36,4 +40,6 @@ public class Agenda extends BaseEntity{
     public void setAgendaVoting(AgendaVoting agendaVoting){
         this.agendaVoting = agendaVoting;
     }
+
+    public void setVotingResult(VotingResult votingResult){this.votingResult = votingResult;}
 }
