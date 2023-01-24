@@ -37,19 +37,22 @@ public class VotingTemplate implements VotingSystem {
 
     private void validateVotingTime(AgendaVoting agendaVoting){
         LocalDateTime currentDateTime = LocalDateTime.now();
-        if (currentDateTime.isAfter(agendaVoting.getEndTime()) && currentDateTime.isBefore(agendaVoting.getStartTime())){
+        if (currentDateTime.isAfter(agendaVoting.getEndTime()) || currentDateTime.isBefore(agendaVoting.getStartTime())){
+            log.info(" 투표 가능한 시간이 아닙니다. ");
             throw new CustomException(ErrorCode.VOTING_IMPOSSIBLE);
         }
     }
 
     public void validateVotingDuplication(User user, Agenda agenda){
         if (votingRepository.findByAgendaAndUser(agenda, user).isPresent()){
+            log.info(" 이미 해당 안건에 투표하였습니다. ");
             throw new CustomException(ErrorCode.USER_ALREADY_VOTE);
         }
     }
 
     private void validateVotingCount(User user, int votingCount){
         if (user.getVotingRightsCount() < votingCount){
+            log.info(" 사용 가능한 의결권을 초과하였습니다. ");
             throw new CustomException(ErrorCode.VOTING_RIGHTS_EXCEED);
         }
     }
