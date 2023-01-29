@@ -6,6 +6,7 @@ build-job:       # This job runs in the build stage, which runs first.
   image: openjdk:17
   before_script:
     - chmod +x gradlew
+    - RUN microdnf install findutils
   script:
     - ./gradlew clean
     - ./gradlew build
