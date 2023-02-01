@@ -19,6 +19,7 @@ import gabia.demo.Service.VotingSystem.VotingSystemFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,11 +42,11 @@ public class VotingService {
     // 투표하기  안건 투표 관련 정보 조회 -> 투표 가능한 시간인지 확인 후 불가능한 시간이면 예외처리
     // 투표 방식에 따른 로직처리
     @Transactional
-    public void vote(User userInfo, Long agendaIdx, VotingDto.VoteReq voteReq){
-        gabia.demo.Domain.User user = userRepository.findByIdAndIsDelete(userInfo.getUsername(), false)
+    public void vote(String userId, Long agendaIdx, VotingDto.VoteReq voteReq){
+        gabia.demo.Domain.User user = userRepository.findByIdAndIsDelete(userId, false)
                 .orElseThrow(()->new CustomException(ErrorCode.USER_NOT_EXISTS));
 
-        Agenda agenda = agendaRepository.findFetchAgendaVotingByIdx(agendaIdx).orElseThrow(()->new CustomException(ErrorCode.AGENDA_NOT_EXISTS));
+        Agenda agenda = agendaRepository.findAgendaInfoByIdx(agendaIdx).orElseThrow(()->new CustomException(ErrorCode.AGENDA_NOT_EXISTS));
 
         VotingDto.VoteData voteData = VotingDto.VoteData.builder().user(user).voteReq(voteReq).agenda(agenda).build();
 

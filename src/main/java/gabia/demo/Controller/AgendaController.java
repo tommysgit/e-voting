@@ -20,6 +20,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,9 +55,9 @@ public class AgendaController {
     @PreAuthorize("hasRole('MEMBER')")
     @Operation(description = "안건 투표하기", summary = "안건 투표하기")
     @PostMapping("{agendaIdx}/votes")
-    public BaseResponse postVote(@AuthenticationPrincipal User userInfo, @PathVariable("agendaIdx") Long agendaIdx,
-                                                 @RequestBody VotingDto.VoteReq voteReq){
-        votingService.vote(userInfo, agendaIdx, voteReq);
+    public BaseResponse postVote(@AuthenticationPrincipal UserDetails userInfo, @PathVariable("agendaIdx") Long agendaIdx,
+                                 @RequestBody VotingDto.VoteReq voteReq){
+        votingService.vote(userInfo.getUsername(), agendaIdx, voteReq);
         return BaseResponse.Success();
     }
 

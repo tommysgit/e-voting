@@ -39,20 +39,7 @@ public class VotingDto {
             this.vote = voteReq.getVote();
             this.votingRightsCount = voteReq.getVotingRightsCount();
         }
-        private void checkVoteStatus(VoteSumDataDto voteSumDataDto){
-            if(Objects.isNull(voteSumDataDto)){
-                this.votingRightsCount = VOTE_LIMIT;
-            } else if(voteSumDataDto.isFull()){
-                log.info("선착순 투표가 마감되었습니다.");
-                throw new RuntimeException();
-            } else if (votingRightsCount > (VOTE_LIMIT - voteSumDataDto.getVoteSum())) {
-                this.votingRightsCount = (VOTE_LIMIT - voteSumDataDto.getVoteSum());
-            }
-        }
-        public Voting limitToEntity(VoteSumDataDto voteSumDataDto){
-                checkVoteStatus(voteSumDataDto);
-            return toEntity();
-        }
+
 
         public Voting toEntity(){
 
