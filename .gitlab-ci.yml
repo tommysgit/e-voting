@@ -5,7 +5,7 @@ build-job:       # This job runs in the build stage, which runs first.
   stage: build
   image: openjdk:17
   tags:
-    - yigwak
+    - yigwak2
   script:
     - ./gradlew clean
     - ./gradlew build
