@@ -14,10 +14,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - echo "$APPLICATION_INFO" > "src/main/resources/application.yml"
     - echo "$APPLICATION_TEST_INFO" > "src/test/resources/application.yml"
   script:
-    - id
-    - whoami
-    - ./gradlew clean
-    - ./gradlew build
+    - ./gradlew clean bootJar
   artifacts:
       paths:
           - build/libs/*.jar
