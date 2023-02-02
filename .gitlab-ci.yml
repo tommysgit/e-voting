@@ -11,6 +11,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - mkdir src/main/resources
     - touch src/main/resources/application.yml
     - echo "$APPLICATION_INFO" > "src/main/resources/application.yml"
+    - echo "$APPLICATION_INFO" > "src/main/resources/application-test.yml"
   script:
     - id
     - whoami
