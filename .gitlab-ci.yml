@@ -8,7 +8,6 @@ build-job:       # This job runs in the build stage, which runs first.
     - yigwak2
   before_script:
     - mkdir src/main/resources
-    - mkdir src/test/resources
     - touch src/main/resources/application.yml
     - touch src/test/resources/application.yml
     - echo "$APPLICATION_INFO" > "src/main/resources/application.yml"
