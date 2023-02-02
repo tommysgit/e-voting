@@ -8,12 +8,13 @@ build-job:       # This job runs in the build stage, which runs first.
     - yigwak2
   before_script:
     - microdnf install findutils
-    - echo pwd
+    - pwd
     - cd src/main
     - mkdir resources
     - cd resources
     - touch application.yml
-    - echo "$APPLICATION_INFO" > "src/main/resources/application.yml"
+    - pwd
+    - echo "$APPLICATION_INFO" > "application.yml"
   script:
     - id
     - whoami
