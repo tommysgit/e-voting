@@ -25,7 +25,7 @@ public class UserVotingResult implements VotingResult{
     @Transactional(readOnly = true)
     public NormalVotingResultDto checkResult(Agenda agenda) {
         validateResultTime(agenda.getAgendaVoting().getEndTime());
-        List<Voting> votingList = votingRepository.findFetchUserByAgenda(agenda);
+        List<Voting> votingList = votingRepository.findByAgenda(agenda);
         UserVotingResultData userVotingResultData = calculationVotingResult(votingList);
 
         return UserVotingResultDto.builder().userVotingResultData(userVotingResultData)

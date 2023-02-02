@@ -41,7 +41,7 @@ dependencies {
 
 	// h2
 	runtimeOnly 'com.h2database:h2'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testCompileOnly 'com.h2database:h2'
 
 }
 
