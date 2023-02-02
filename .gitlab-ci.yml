@@ -3,13 +3,13 @@ stages:          # List of stages for jobs, and their order of execution
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
-  image: openjdk:17-oracle
+  image: openjdk:11
   tags:
     - yigwak2
   before_script:
-    - microdnf install findutils
     - mkdir src/main/resources
     - touch src/main/resources/application.yml
+    - touch src/main/resources/application-test.yml
     - echo "$APPLICATION_INFO" > "src/main/resources/application.yml"
     - echo "$APPLICATION_TEST_INFO" > "src/main/resources/application-test.yml"
   script:
