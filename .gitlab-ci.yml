@@ -27,4 +27,4 @@ test-job:
   tags:
     - yigwak2
   script:
-    - ./gradlew test
+    - ./gradlew test --stacktrace
