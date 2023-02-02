@@ -52,12 +52,7 @@ public class VotingServiceTest {
 
 
 
-    @AfterEach
-    void deleteTestDate(){
-        votingRepository.deleteAll();
-        userRepository.deleteAll();
-        agendaRepository.deleteAll();
-    }
+
 
     @Test()
     @DisplayName("선착순 투표 동시성 테스트")
@@ -112,8 +107,11 @@ public class VotingServiceTest {
         Agenda agenda = Agenda.builder().content("졸업식을 갈지말지에 대해...").build();
         AgendaVoting agendaVoting = AgendaVoting.builder().agenda(agenda).votingSort(VotingSort.NON_LIMIT)
                 .startTime(now).endTime(now.plusMinutes(1)).build();
+        VotingResult votingResult = VotingResult.builder().agenda(agenda).build();
         agenda.setAgendaVoting(agendaVoting);
-        agendaVotingRepository.save(agendaVoting);
+        agenda.setVotingResult(votingResult);
+
+        agendaRepository.save(agenda);
 
         // when
         for (int i = 0; i < loopCount; i++) {
