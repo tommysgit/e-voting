@@ -1,5 +1,6 @@
 stages:          # List of stages for jobs, and their order of execution
   - build
+  - test
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
@@ -8,15 +9,13 @@ build-job:       # This job runs in the build stage, which runs first.
     - yigwak2
   before_script:
     - mkdir src/main/resources
+    - mkdir src/test/resources
     - touch src/main/resources/application.yml
-    - touch src/main/resources/application-test.yml
+    - touch src/test/resources/application.yml
     - echo "$APPLICATION_INFO" > "src/main/resources/application.yml"
-    - echo "$APPLICATION_TEST_INFO" > "src/main/resources/application-test.yml"
+    - echo "$APPLICATION_TEST_INFO" > "src/test/resources/application.yml"
   script:
-    - id
-    - whoami
-    - ./gradlew clean
-    - ./gradlew build
+    - ./gradlew clean bootJar
   artifacts:
       paths:
           - build/libs/*.jar
@@ -28,4 +27,4 @@ test-job:
   tags:
     - yigwak2
   script:
-    - ./gradlew test
+    - ./gradlew test --stacktrace

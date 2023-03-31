@@ -19,7 +19,7 @@ public class AdminVotingResult implements VotingResult{
     @Override
     @Transactional(readOnly = true)
     public NormalVotingResultDto checkResult(Agenda agenda) {
-        List<Voting> votingList = votingRepository.findFetchUserByAgenda(agenda);
+        List<Voting> votingList = votingRepository.findByAgenda(agenda);
         AdminVotingResultData adminVotingResultData = calculationAdminVotingResult(votingList);
         return AdminVotingResultDto.builder().agenda(agenda).adminVotingResultData(adminVotingResultData)
                 .build();
